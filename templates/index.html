@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Automatic License Plate Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Automatic License Plate Recognition</h1>
+
+    <div class="video-container">
+      <img id="video" src="{{ url_for('video_feed') }}" alt="Webcam feed">
+    </div>
+
+    <button onclick="captureAndDetect()">Capture & Detect Plate</button>
+
+    <div class="output-block">
+      <h3>Plate Number Detected:</h3>
+      <p id="predicted-text">---</p>
+    </div>
+  </div>
+
+  <script>
+    function captureAndDetect() {
+      fetch('/detect_plate', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        const predicted = document.getElementById("predicted-text");
+        if (data.plate_text) {
+          predicted.innerText = data.plate_text;
+        } else {
+          predicted.innerText = "No plate detected.";
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        document.getElementById("predicted-text").innerText = "An error occurred.";
+      });
+    }
+  </script>
+  
+</body>
+</html>
+
+
+
